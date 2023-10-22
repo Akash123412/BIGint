@@ -16,7 +16,6 @@ int main()
     struct Node* diff = subtractbigint(num1, num2);
 
 
-    // Print the results
     printf("Number 1: ");
     print(num1);
     printf("Number 2: ");

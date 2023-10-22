@@ -14,14 +14,14 @@ struct node
 
 
 struct node* createnode(int data) {
-    struct node* newNode = (struct node*)malloc(sizeof(struct node));
-    if (newNode == NULL) {
+    struct node* newnode = (struct node*)malloc(sizeof(struct node));
+    if (newnode == NULL) {
         fprintf(stderr, "allocation failed\n");
         exit(1);
     }
-    newNode->data = data;
-    newNode->next = NULL;
-    return newNode;
+    newnode->data = data;
+    newnode->next = NULL;
+    return newnode;
 }
 
 struct node* reverselist(struct node* head) {
@@ -39,26 +39,12 @@ struct node* reverselist(struct node* head) {
     return prev;
 }
 
-void print(struct node* num) {
-    if (num == NULL) {
-        printf("0");
-        return;
-    }
-
-    num = reverselist(num);
-
-    while (num != NULL) {
-        printf("%d", num->data);
-        num = num->next;
-    }
-    printf("\n");
-}
 
 struct node* inputbigint() {
-    struct node* num = NULL;
+    struct node* temp = NULL;
     char ch;
 
-    printf("Enter big number (terminate with Enter):\n");
+    printf("Enter big integer (terminate with Enter):\n");
 
     while (1) {
         ch = getchar();
@@ -67,60 +53,21 @@ struct node* inputbigint() {
         }
 
         int digit = ch - '0';
-        struct node* newNode = createnode(digit);
+        struct node* newnode = createnode(digit);
 
-        if (num == NULL) {
-            num = newNode;
+        if (temp == NULL) {
+            temp = newnode;
         } else {
-            newNode->next = num;
-            num = newNode;
+            newnode->next = temp;
+            temp = newnode;
         }
     }
 
-    return num;
+    return temp;
 }
 
 
 
-struct node* multiplybigint(struct node* num1, struct node* num2) {
-    struct node* result = createnode(0);
-    struct node* tempResult = result;
-
-    while (num2 != NULL) {
-        int carry = 0;
-        struct node* tempNum1 = num1;
-        result = tempResult;
-
-        while (tempNum1 != NULL) {
-            int product = (num2->data * tempNum1->data) + carry;
-
-            if (result == NULL) {
-                result = createnode(product % 10);
-                tempResult = result;
-            } else {
-                while (result->next != NULL) {
-                    result = result->next;
-                }
-                result->next = createnode(product % 10);
-            }
-
-            carry = product / 10;
-            tempNum1 = tempNum1->next;
-        }
-
-        if (carry > 0) {
-            while (result->next != NULL) {
-                result = result->next;
-            }
-            result->next = createnode(carry);
-        }
-
-        num2 = num2->next;
-        tempResult = addbigint(tempResult, createnode(0));
-    }
-
-    return tempResult;
-}
 struct node* addbigint(struct node* num1, struct node* num2) {
     struct node* result = NULL;
     struct node* temp;
@@ -140,17 +87,75 @@ struct node* addbigint(struct node* num1, struct node* num2) {
         carry = sum / 10;
         sum %= 10;
 
-        struct node* newNode = createnode(sum);
+        struct node* newnode = createnode(sum);
         if (result == NULL) {
-            result = newNode;
+            result = newnode;
             temp = result;
         } else {
-            temp->next = newNode;
+            temp->next = newnode;
             temp = temp->next;
         }
     }
 
     return result;
+}
+
+
+void print(struct node* temp) {
+    if (temp == NULL) {
+        printf("0");
+        return;
+    }
+
+    temp = reverselist(temp);
+
+    while (temp != NULL) {
+        printf("%d", temp->data);
+        temp = temp->next;
+    }
+    printf("\n");
+}
+
+
+
+struct node* multiplybigint(struct node* num1, struct node* num2) {
+    struct node* result = createnode(0);
+    struct node* tempresult = result;
+
+    while (num2 != NULL) {
+        int carry = 0;
+        struct node* tempnum1 = num1;
+        result = tempresult;
+
+        while (tempnum1 != NULL) {
+            int product = (num2->data * tempnum1->data) + carry;
+
+            if (result == NULL) {
+                result = createnode(product % 10);
+                tempresult = result;
+            } else {
+                while (result->next != NULL) {
+                    result = result->next;
+                }
+                result->next = createnode(product % 10);
+            }
+
+            carry = product / 10;
+            tempnum1 = tempnum1->next;
+        }
+
+        if (carry > 0) {
+            while (result->next != NULL) {
+                result = result->next;
+            }
+            result->next = createnode(carry);
+        }
+
+        num2 = num2->next;
+        tempresult = addbigint(tempresult, createnode(0));
+    }
+
+    return tempresult;
 }
 struct node* dividebigint(struct node* num1, struct node* num2) {
     struct node* result = NULL;
@@ -169,21 +174,21 @@ struct node* dividebigint(struct node* num1, struct node* num2) {
 
     while (num1 != NULL) {
         int quotient = 0;
-        struct node* tempNum1 = num1;
+        struct node* tempnum1 = num1;
 
-        while (tempNum1 != NULL && greateroreq(tempNum1, num2)) {
-            tempNum1 = subtractbigint(tempNum1, num2);
+        while (tempnum1 != NULL && greateroreq(tempnum1, num2)) {
+            tempnum1 = subtractbigint(tempnum1, num2);
             quotient++;
         }
 
         if (result == NULL) {
             result = createnode(quotient);
         } else {
-            struct node* tempResult = result;
-            while (tempResult->next != NULL) {
-                tempResult = tempResult->next;
+            struct node* tempresult = result;
+            while (tempresult->next != NULL) {
+                tempresult = tempresult->next;
             }
-            tempResult->next = createnode(quotient);
+            tempresult->next = createnode(quotient);
         }
 
         num1 = num1->next;
@@ -217,12 +222,12 @@ struct node* subtractbigint(struct node* num1, struct node* num2) {
             borrow = 0;
         }
 
-        struct node* newNode = createnode(diff);
+        struct node* newnode = createnode(diff);
         if (result == NULL) {
-            result = newNode;
+            result = newnode;
             temp = result;
         } else {
-            temp->next = newNode;
+            temp->next = newnode;
             temp = temp->next;
         }
     }
